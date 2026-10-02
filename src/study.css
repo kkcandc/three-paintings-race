@@ -1,0 +1,59 @@
+@import '@fontsource/fraunces/500-italic.css';
+@import '@fontsource/outfit/400.css';
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: #090909;
+  color: #f4ecdf;
+  font-family: Outfit, sans-serif;
+}
+
+#stage {
+  position: fixed;
+  inset: 0;
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.back, .plaque {
+  position: fixed;
+  z-index: 2;
+  margin: 0;
+}
+
+.back {
+  top: 16px;
+  left: 16px;
+  text-decoration: none;
+  color: #f4ecdf;
+  background: rgba(16, 14, 12, 0.5);
+  border: 1px solid rgba(244, 236, 223, 0.25);
+  backdrop-filter: blur(10px);
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+}
+
+.plaque {
+  left: 16px;
+  bottom: 16px;
+  font-family: Fraunces, serif;
+  font-style: italic;
+  font-size: 16px;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
+}
+
+.study-memory .back {
+  color: #2a2118;
+  background: rgba(255, 248, 236, 0.62);
+  border-color: rgba(42, 33, 24, 0.18);
+}
+
+.study-memory .plaque { color: #2a2118; text-shadow: none; }
+
+.study-poppies .plaque { color: #1c2416; }
