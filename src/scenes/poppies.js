@@ -98,10 +98,10 @@ function skyMaterial(timeUniform) {
       void main(){
         vec3 n = normalize(vPos);
         float h = clamp(n.y * 0.5 + 0.5, 0.0, 1.0);
-        vec3 col = mix(lin(vec3(0.96, 0.93, 0.84)), lin(vec3(0.45, 0.70, 0.90)), smoothstep(0.0, 0.7, h));
+        vec3 col = mix(lin(vec3(0.86, 0.93, 0.98)), lin(vec3(0.18, 0.46, 0.86)), smoothstep(0.0, 0.72, h));
         vec2 uv = n.xz / max(0.15, n.y + 0.35);
         float clouds = fbm(uv * 1.4 + vec2(uTime * 0.015, 0.0));
-        clouds = smoothstep(0.42, 0.78, clouds);
+        clouds = smoothstep(0.58, 0.88, clouds);
         float strokes = 0.5 + 0.5 * sin((uv.x + uv.y) * 28.0 + clouds * 6.0);
         vec3 cloudCol = mix(lin(vec3(0.99, 0.97, 0.93)), lin(vec3(0.93, 0.90, 0.84)), strokes);
         col = mix(col, cloudCol, clouds * smoothstep(0.05, 0.4, h));
@@ -122,14 +122,14 @@ export function createPoppies(canvas) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.08;
-  renderer.setClearColor(0x8ec5e8, 1);
+  renderer.toneMappingExposure = 1.0;
+  renderer.setClearColor(0x3d7ec4, 1);
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(0xc5dcef, 18, 62);
+  scene.fog = new THREE.Fog(0x9ec8ee, 22, 70);
 
-  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 180);
-  camera.position.set(0.4, 1.65, 12.5);
+  const camera = new THREE.PerspectiveCamera(46, 1, 0.1, 180);
+  camera.position.set(0.2, 1.55, 9.4);
 
   const timeUniform = { value: 0 };
   scene.add(new THREE.Mesh(new THREE.SphereGeometry(90, 32, 20), skyMaterial(timeUniform)));
@@ -171,21 +171,22 @@ export function createPoppies(canvas) {
   const reds = ['#e23b32', '#c4171c', '#ff5d3c', '#9f1418', '#d24a38', '#f18462'].map((h) => new THREE.Color(h));
   const greens = ['#3f6b34', '#6d8f3c', '#234824', '#8aaa48'].map((h) => new THREE.Color(h));
 
-  const flowerCount = 640;
+  const flowerCount = 780;
   const flowers = [];
   for (let i = 0; i < flowerCount; i++) {
-    const x = (rand() - 0.5) * 46;
-    const z = (rand() - 0.5) * 42 + 2;
-    const stem = 0.55 + rand() * 0.85;
+    const foreground = i < 280;
+    const x = foreground ? (rand() - 0.5) * 15 : (rand() - 0.5) * 52;
+    const z = foreground ? 0.2 + rand() * 5.4 : -22 + rand() * 20;
+    const stem = foreground ? 0.85 + rand() * 0.7 : 0.5 + rand() * 0.7;
     flowers.push({
       x,
       y: heightAt(x, z),
       z,
       stem,
-      petals: rand() > 0.2 ? 5 : 4,
+      petals: rand() > 0.18 ? 5 : 4,
       yaw: rand() * Math.PI * 2,
-      tilt: 0.35 + rand() * 0.45,
-      scale: 0.55 + rand() * 0.9,
+      tilt: foreground ? 0.55 + rand() * 0.4 : 0.35 + rand() * 0.4,
+      scale: foreground ? 1.35 + rand() * 0.85 : 0.6 + rand() * 0.7,
       color: reds[Math.floor(rand() * reds.length)],
     });
   }
@@ -195,7 +196,7 @@ export function createPoppies(canvas) {
   for (const flower of flowers) petalInstances += flower.petals;
 
   const petalMat = windMaterial(
-    new THREE.MeshLambertMaterial({ side: THREE.DoubleSide }),
+    new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }),
     timeUniform,
     0.22,
   );
@@ -205,7 +206,7 @@ export function createPoppies(canvas) {
 
   const stemGeo = new THREE.CylinderGeometry(0.012, 0.016, 1, 5);
   stemGeo.translate(0, 0.5, 0);
-  const stemMat = windMaterial(new THREE.MeshLambertMaterial(), timeUniform, 0.18);
+  const stemMat = windMaterial(new THREE.MeshBasicMaterial(), timeUniform, 0.18);
   const stems = new THREE.InstancedMesh(stemGeo, stemMat, flowerCount);
   stems.instanceColor = new THREE.InstancedBufferAttribute(new Float32Array(flowerCount * 3), 3);
   stems.frustumCulled = false;
@@ -256,7 +257,7 @@ export function createPoppies(canvas) {
   const blade = new THREE.PlaneGeometry(0.08, 0.62);
   blade.translate(0, 0.31, 0);
   const grassMat = windMaterial(
-    new THREE.MeshLambertMaterial({ side: THREE.DoubleSide }),
+    new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }),
     timeUniform,
     0.28,
   );
@@ -375,10 +376,10 @@ export function createPoppies(canvas) {
     pointer.update();
     timeUniform.value = time;
     const bob = Math.sin(time * 0.25);
-    camera.position.x = 0.2 + pointer.pointer.x * 1.4 + Math.sin(time * 0.12) * 0.4;
-    camera.position.y = 1.55 + bob * 0.08 + pointer.pointer.y * -0.25;
-    camera.position.z = 11.6 + Math.sin(time * 0.08) * 0.4;
-    camera.lookAt(pointer.pointer.x * 1.5, 1.15, -2);
+    camera.position.x = 0.1 + pointer.pointer.x * 0.7 + Math.sin(time * 0.12) * 0.2;
+    camera.position.y = 1.5 + bob * 0.05 + pointer.pointer.y * -0.12;
+    camera.position.z = 9.3 + Math.sin(time * 0.08) * 0.15;
+    camera.lookAt(pointer.pointer.x * 0.6, 1.7, -6);
 
     const walk = Math.sin(time * 0.35) * 2.2;
     const px = -1.5 + walk;

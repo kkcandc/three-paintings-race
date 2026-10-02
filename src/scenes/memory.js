@@ -93,10 +93,11 @@ function createWatch(texture, { radius = 0.72, hang = 1.05, fold = 0.02 } = {}) 
     meltDisk(radius, hang, fold),
     new THREE.MeshPhysicalMaterial({
       map: texture,
-      metalness: 0.55,
-      roughness: 0.38,
-      clearcoat: 0.45,
-      clearcoatRoughness: 0.35,
+      color: '#8d5a22',
+      metalness: 0.62,
+      roughness: 0.42,
+      clearcoat: 0.3,
+      clearcoatRoughness: 0.45,
     }),
   );
   face.castShadow = true;
@@ -192,25 +193,26 @@ export function createMemory(canvas) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.12;
+  renderer.toneMappingExposure = 0.62;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.setClearColor(0xd7e6ea, 1);
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(0xe6d5bf, 16, 36);
+  scene.fog = new THREE.Fog(0xcbb89a, 12, 26);
   scene.background = new THREE.Color(0xd5e6ea);
+  scene.environmentIntensity = 0.22;
 
   const pmrem = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.05).texture;
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
   pmrem.dispose();
 
-  const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 80);
-  camera.position.set(5.1, 2.55, 7.4);
+  const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 80);
+  camera.position.set(2.7, 1.55, 3.7);
 
-  const hemi = new THREE.HemisphereLight(0xf7f1e4, 0xc49a62, 0.55);
+  const hemi = new THREE.HemisphereLight(0xf3ead8, 0x6d4a2c, 0.16);
   scene.add(hemi);
-  const sun = new THREE.DirectionalLight(0xfff3dd, 3.1);
+  const sun = new THREE.DirectionalLight(0xfff1d4, 1.85);
   sun.position.set(-7.5, 9.5, 6.5);
   sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048);
@@ -254,7 +256,7 @@ export function createMemory(canvas) {
   const groundGeo = new THREE.PlaneGeometry(48, 48, 90, 90);
   const gp = groundGeo.attributes.position;
   const colors = new Float32Array(gp.count * 3);
-  const sand = new THREE.Color('#e0c07a');
+  const sand = new THREE.Color('#d7b56a');
   const wet = new THREE.Color('#b7cbb8');
   const deep = new THREE.Color('#7fa8aa');
   const tint = new THREE.Color();
@@ -409,10 +411,10 @@ export function createMemory(canvas) {
     pointer.update();
     sky.material.uniforms.uTime.value = time;
     const drift = time * 0.08;
-    camera.position.x = 5.1 + Math.sin(drift) * 0.45 + pointer.pointer.x * 0.35;
-    camera.position.y = 2.5 + pointer.pointer.y * -0.15;
-    camera.position.z = 7.35 + Math.cos(drift) * 0.28;
-    camera.lookAt(0.35, 1.05, -0.2);
+    camera.position.x = 2.7 + Math.sin(drift) * 0.18 + pointer.pointer.x * 0.16;
+    camera.position.y = 1.55 + pointer.pointer.y * -0.08;
+    camera.position.z = 3.7 + Math.cos(drift) * 0.1;
+    camera.lookAt(0.35, 0.95, 0.0);
 
     for (const watch of watches) {
       const { hour, minute, offset } = watch.userData.hands;

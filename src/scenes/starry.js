@@ -161,23 +161,21 @@ void main() {
   ) * 0.08;
 
   float field = fbm(warped * 3.1);
-  float ribbons = sin(field * 16.0 + spiral * 5.5 - t * 0.45);
-  float band = ribbons * 0.5 + 0.5;
+  float swirl = clamp(spiral, 0.0, 1.0);
+  vec2 stroked = warped * vec2(42.0, 30.0) + swirl * vec2(3.0, -2.0);
+  float line = pow(clamp(0.5 + 0.5 * sin(stroked.x + stroked.y - t * 0.6), 0.0, 1.0), 28.0);
+  float band = pow(clamp(0.5 + 0.5 * sin(stroked.x * 0.45 - stroked.y * 0.35 + 1.3), 0.0, 1.0), 16.0);
 
-  vec3 deep = lin(vec3(0.035, 0.07, 0.20));
-  vec3 cobalt = lin(vec3(0.11, 0.27, 0.62));
-  vec3 sky = lin(vec3(0.36, 0.58, 0.78));
-  vec3 cream = lin(vec3(0.93, 0.88, 0.62));
-  vec3 yolk = lin(vec3(0.98, 0.86, 0.42));
+  vec3 deep = lin(vec3(0.01, 0.03, 0.12));
+  vec3 cobalt = lin(vec3(0.05, 0.16, 0.48));
+  vec3 mid = lin(vec3(0.22, 0.42, 0.75));
+  vec3 cream = lin(vec3(0.95, 0.88, 0.58));
+  vec3 yolk = lin(vec3(1.0, 0.84, 0.38));
 
-  vec3 col = mix(deep, cobalt, smoothstep(0.05, 0.55, band));
-  col = mix(col, sky, smoothstep(0.48, 0.82, band) * (0.35 + 0.65 * field));
-  float crest = smoothstep(0.78, 1.0, band);
-  col = mix(col, cream, crest * (0.25 + 0.75 * spiral));
-  col = mix(col, yolk, crest * spiral * 0.35);
-
-  float skyLift = smoothstep(0.25, 0.95, uv.y);
-  col = mix(lin(vec3(0.05, 0.10, 0.28)), col, 0.35 + 0.65 * skyLift);
+  vec3 col = mix(deep, cobalt, 0.2 + 0.8 * clamp(field, 0.0, 1.0));
+  col = mix(col, mid, band * 0.4);
+  col += cream * line * (0.45 + 0.55 * swirl);
+  col += yolk * line * swirl * 0.35;
 
   vec2 moonC = vec2(0.80, 0.78) + vec2(uPointer.x, -uPointer.y) * 0.01;
   vec2 md = uv - moonC;
@@ -268,11 +266,19 @@ void main() {
   float diff = clamp(dot(normal, lightDir), 0.0, 1.0);
   float spec = pow(clamp(dot(reflect(-lightDir, normal), vec3(0.0, 0.0, 1.0)), 0.0, 1.0), 16.0);
   float paintMask = 1.0 - inside * 0.65;
-  col *= 0.78 + 0.4 * diff * paintMask;
-  col += lin(vec3(1.0, 0.95, 0.82)) * spec * paintMask * 0.22;
+  col *= 0.82 + 0.22 * diff * paintMask;
+  col += lin(vec3(1.0, 0.95, 0.82)) * spec * paintMask * 0.1;
 
   float weave = sin(uv.x * 740.0) * sin(uv.y * 740.0);
   col *= 0.965 + 0.035 * weave;
+
+  float skyRegion = smoothstep(0.18, 0.4, uv.y) * (1.0 - inside) * (1.0 - front);
+  float stripes = pow(clamp(0.5 + 0.5 * sin(uv.x * 46.0 + uv.y * 28.0 + field * 6.0 - t * 0.5), 0.0, 1.0), 36.0);
+  float curls = pow(clamp(0.5 + 0.5 * sin(length(uv - c1) * 34.0 - atan(uv.y - c1.y, uv.x - c1.x) * 3.0 + t * 0.4), 0.0, 1.0), 22.0);
+  vec3 night = mix(lin(vec3(0.015, 0.05, 0.28)), lin(vec3(0.10, 0.28, 0.78)), clamp(field, 0.0, 1.0));
+  night += lin(vec3(0.62, 0.78, 0.98)) * stripes;
+  night += lin(vec3(0.98, 0.86, 0.42)) * curls * 0.95;
+  col = mix(col, night, skyRegion);
 
   vec2 p = uv * 2.0 - 1.0;
   float vig = smoothstep(1.25, 0.25, length(p * vec2(0.85, 1.0)));
