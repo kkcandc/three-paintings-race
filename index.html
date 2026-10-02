@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Blind Race — Three Studies</title>
+    <meta
+      name="description"
+      content="Three generative Three.js studies — night swell, melting hours, and a poppy field — compared side by side. Educational homage, not for sale."
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#14110e" />
+  </head>
+  <body>
+    <div class="wall">
+      <header class="top">
+        <div class="brand">
+          <p class="kicker">Blind race · three lanes</p>
+          <h1>Three studies in paint and light</h1>
+        </div>
+        <nav class="modes" aria-label="Gallery layout">
+          <button type="button" data-mode="all" aria-pressed="true">Side by side</button>
+          <button type="button" data-mode="starry">I · Night</button>
+          <button type="button" data-mode="memory">II · Hours</button>
+          <button type="button" data-mode="poppies">III · Field</button>
+        </nav>
+      </header>
+
+      <div id="lanes" data-mode="all">
+        <section class="lane" data-lane="starry">
+          <div class="stage" data-density="shared">
+            <canvas aria-label="Night Swell, a swirling cobalt study"></canvas>
+          </div>
+          <figcaption>
+            <span class="index">I</span>
+            <div>
+              <h2>Night Swell</h2>
+              <p>Turbulent cobalt, a breathing cypress, and stars that throw light across thick paint.</p>
+            </div>
+            <a href="/starry.html">Open study</a>
+          </figcaption>
+        </section>
+
+        <section class="lane" data-lane="memory">
+          <div class="stage" data-density="shared">
+            <canvas aria-label="Soft Hours, a quiet shore with melting watches"></canvas>
+          </div>
+          <figcaption>
+            <span class="index">II</span>
+            <div>
+              <h2>Soft Hours</h2>
+              <p>A still bay, limp gold watches, and a sleeper resting in late light.</p>
+            </div>
+            <a href="/memory.html">Open study</a>
+          </figcaption>
+        </section>
+
+        <section class="lane" data-lane="poppies">
+          <div class="stage" data-density="shared">
+            <canvas aria-label="Field of Strokes, poppies moving in the wind"></canvas>
+          </div>
+          <figcaption>
+            <span class="index">III</span>
+            <div>
+              <h2>Field of Strokes</h2>
+              <p>An open meadow of red dabs, wind, and a white parasol in the grass.</p>
+            </div>
+            <a href="/poppies.html">Open study</a>
+          </figcaption>
+        </section>
+      </div>
+
+      <footer class="colophon">
+        <p>
+          Move inside a lane to shift the light. Keys 1–3 focus a study, 0 returns to the wall.
+        </p>
+        <p>
+          Educational fair-use homage. These are original generative scenes in the palette, brush energy,
+          and mood of Van Gogh’s night sky, Dalí’s melting hours, and Monet’s poppy fields. Not reproductions,
+          not affiliated with any estate or museum, and not for sale.
+        </p>
+      </footer>
+    </div>
+    <script type="module" src="/src/gallery.js"></script>
+  </body>
+</html>
